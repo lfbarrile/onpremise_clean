@@ -1,0 +1,80 @@
+---
+- name: Remove Weblogic out Files
+  find:
+    path: /u01/middleware/domains
+    recurse: yes
+    patterns: "*.out0*"
+  register: files_to_delete00
+
+- name: Remove Weblogic log Files
+  find:
+    path: /u01/middleware/domains
+    recurse: yes
+    patterns: "*.log0*"
+  register: files_to_delete01
+
+- name: Remove JBOSS Log Files
+  find:
+    path: /u01/jboss/server
+    patterns: "server.log.*"
+  register: files_to_delete02
+
+- name: Remove TREND Hosts Log Files
+  find:
+    path: /u01/weblogic/logs
+    recurse: yes
+    patterns: "*.log0*"
+  register: files_to_delete03
+
+- name: Remove Trend out files
+  find:
+    path: /log
+    recurse: yes
+    patterns: "*.out0*"
+  register: files_to_delete04
+
+- name: Remove Trend BPEL log files
+  find:
+    path: /log
+    recurse: yes
+    patterns: "*.log"
+  register: files_to_delete05
+
+- name: Clean Trend BPEL out Files
+  find:
+    path: /log/prod_oss01
+    recurse: yes
+    patterns: "*.out"
+  register: files_to_delete06
+
+- name: Execute Shell
+  shell: echo /dev/null > "{{ item.path }}"
+  with_items:
+    - "{{ files_to_delete06.files }}"
+
+- name: Clean ldap files of BPEL
+  find:
+    path: /u01/middleware/OSS/domains/prod_oss01/servers/
+    recurse: yes
+    patterns: EmbeddedLDAPAccess.log.*
+  register: files_to_delete07
+
+- name: Ansible remove File
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items:
+    - "{{ files_to_delete00.files }}"
+    - "{{ files_to_delete01.files }}"
+    - "{{ files_to_delete02.files }}"
+    - "{{ files_to_delete03.files }}"
+    - "{{ files_to_delete04.files }}"
+    - "{{ files_to_delete05.files }}"
+    - "{{ files_to_delete07.files }}"
+    
+
+    
+...
+
+
+

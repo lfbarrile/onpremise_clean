@@ -1,0 +1,20 @@
+---
+- name:  Verify daylight saving time
+  debug:
+    var=ansible_date_time.hour
+
+- name: Check time on Weblogic Files
+  shell: grep -ir --include="*.out" "12:" /u01
+  register: grepresult
+  ignore_errors: yes
+
+- name: CERTO
+  debug: msg="Ok {{ ansible_hostname }}"
+  when: grepresult.stdout != ""
+
+- name: ERRADO
+  debug: msg="Ok {{ ansible_hostname }}"
+  when: grepresult.stdout == ""       
+...
+
+  
